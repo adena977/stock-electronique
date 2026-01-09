@@ -1,7 +1,7 @@
 # Dockerfile
-FROM php:8.2-apache
+FROM php:8.2-cli
 
-# Installer les dépendances système
+# Installer les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -24,19 +24,14 @@ WORKDIR /var/www/html
 # Copier les fichiers
 COPY . .
 
-# Installer les dépendances PHP
+# Installer les dépendances
 RUN composer install --no-dev --optimize-autoloader
 
-# Configurer Apache
-RUN a2enmod rewrite
-COPY .docker/apache.conf /etc/apache2/sites-available/000-default.conf
+# Configurer les permissions
+RUN chmod -R 755 storage bootstrap/cache
 
-# Définir les permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
-
-# Port exposé
+# Exposer le port
 EXPOSE 8080
 
-# Commande de démarrage
-CMD ["apache2-foreground"]
+# ⚠️ IMPORTANT: Démarrer depuis le dossier PUBLIC
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
