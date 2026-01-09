@@ -1,8 +1,10 @@
 # Dockerfile
 FROM php:8.2-cli
 
-# Installer les extensions PHP nécessaires
+# Installer SQLite et extensions
 RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    libsqlite3-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -11,27 +13,29 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql zip
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_sqlite zip
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier les fichiers
 COPY . .
 
 # Installer les dépendances
 RUN composer install --no-dev --optimize-autoloader
 
-# Configurer les permissions
-RUN chmod -R 755 storage bootstrap/cache
+# Créer la base de données SQLite
+RUN touch database/database.sqlite
+RUN chmod 777 database/database.sqlite storage bootstrap/cache
 
-# Exposer le port
+# Exécuter les migrations
+RUN php artisan migrate --force
+
+# Créer le lien de stockage
+RUN php artisan storage:link
+
 EXPOSE 8080
 
-# ⚠️ IMPORTANT: Démarrer depuis le dossier PUBLIC
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
