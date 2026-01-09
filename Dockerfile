@@ -21,19 +21,19 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Créer le fichier SQLite avec le bon chemin
+# Créer le fichier SQLite
 RUN mkdir -p /var/www/html/database
 RUN touch /var/www/html/database/database.sqlite
 RUN chmod 777 /var/www/html/database/database.sqlite
 
+# Installer les dépendances
 RUN composer install --no-dev --optimize-autoloader
 
-# Forcer les bonnes variables d'environnement
-RUN echo "DB_CONNECTION=sqlite" >> .env
-RUN echo "DB_DATABASE=/var/www/html/database/database.sqlite" >> .env
-RUN echo "SESSION_DRIVER=array" >> .env
+# ⚠️ EXÉCUTER LES MIGRATIONS (IMPORTANT !)
+RUN php artisan migrate --force
 
-RUN chmod 777 storage bootstrap/cache
+# Configurer les permissions
+RUN chmod -R 777 storage bootstrap/cache
 
 # Créer le lien de stockage
 RUN php artisan storage:link || true
