@@ -1,0 +1,30 @@
+# render.yaml
+services:
+  - type: web
+    name: gestion-stock-laravel
+    runtime: php
+    repo: https://github.com/votre-username/votre-repo
+    region: frankfurt  # ou "oregon", "ohio"
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan key:generate --force
+      php artisan storage:link
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: php artisan serve --host=0.0.0.0 --port=10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: APP_URL
+        sync: false  # Render le définira automatiquement
+
+databases:
+  - name: gestionstockdb
+    plan: free
+    region: frankfurt

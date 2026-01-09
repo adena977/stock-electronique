@@ -1,0 +1,55 @@
+# .env.production - À utiliser pour Render
+APP_NAME="Gestion de Stock Électronique"
+APP_ENV=production
+APP_DEBUG=false
+
+# IMPORTANT: Laissez APP_KEY vide, Render le générera
+APP_KEY=
+
+# URL de votre app sur Render (vous la connaîtrez après création)
+APP_URL=https://votre-app.onrender.com
+
+# Langue
+APP_LOCALE=fr
+APP_FALLBACK_LOCALE=fr
+
+# Database PostgreSQL (Render fournira les valeurs)
+DB_CONNECTION=pgsql
+DB_HOST=xxx.postgres.render.com  # À remplacer avec l'host de Render
+DB_PORT=5432
+DB_DATABASE=gestionstock  # À remplacer
+DB_USERNAME=gestionuser   # À remplacer
+DB_PASSWORD=xxx           # À remplacer (Render génère)
+
+# Pour le seuil d'alerte (gardez si vous en avez besoin)
+STOCK_SEUIL_ALERTE=5
+
+# Sessions
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+
+# Fichiers
+FILESYSTEM_DISK=public
+
+# Cache
+CACHE_STORE=database
+
+# Queue
+QUEUE_CONNECTION=database
+
+# Email (en production, vous pourriez vouloir un vrai service)
+MAIL_MAILER=log
+MAIL_FROM_ADDRESS="noreply@votre-domaine.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+# Logging spécifique pour Render
+LOG_CHANNEL=stderr
+LOG_LEVEL=info
+
+# Désactiver les fonctionnalités inutiles en production
+BROADCAST_CONNECTION=log
+
+# Pour Vite si vous avez un frontend
+VITE_APP_NAME="${APP_NAME}"
+VITE_APP_URL="${APP_URL}"
